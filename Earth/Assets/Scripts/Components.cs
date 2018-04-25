@@ -31,8 +31,13 @@ public struct SatelliteData
     public string cospar;
     public string norad;
     public string comments;
-    //TODO aggiungere source finali
-
+    public string orbital_data_source;
+    public string source;
+    public string source_1;
+    public string source_2;
+    public string source_3;
+    public string source_4;
+    public string source_5;
 };
 
 public struct TLEObject

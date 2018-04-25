@@ -9,7 +9,7 @@ public class Parser : MonoBehaviour {
     //TODO eliminare
     public void Start()
     {
-        //ReadAllSatellites("./Assets/Resources/sat_data_forse_ce_la_facciamo_utf7.txt");
+        //ReadAllSatellites("./Assets/Resources/sat_data_clean.txt");
         //ReadAllTLE("./Assets/Resources/TLE_Objects_16_03_2018_clean.txt");
     }
 
@@ -62,15 +62,23 @@ public class Parser : MonoBehaviour {
         data.norad = items[25];
         data.comments = items[26];
 
+        data.orbital_data_source = items[27];
+        data.source = items[28];
+        data.source_1 = items[29];
+        data.source_2 = items[30];
+        data.source_3 = items[31];
+        data.source_4 = items[32];
+        data.source_5 = items[33];
+
         return data;
     }
 
-    private float SanitizeFloat(string item, float default_value)
+    private static float SanitizeFloat(string item, float default_value)
     {
         return item != "" ? float.Parse(item, System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture) : default_value;
     }
 
-    private double SanitizeDouble(string item, double default_value)
+    private static double SanitizeDouble(string item, double default_value)
     {
         if(item.Equals(""))
         {
