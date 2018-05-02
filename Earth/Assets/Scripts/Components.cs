@@ -52,3 +52,54 @@ public struct TLEObject
     public double in_sma;
     public double in_ecc;
 };
+
+public struct TLESemiObj
+{
+    public double in_per;
+    public double in_apo;
+    public double in_inc;
+    public double in_raan;
+    public double in_arg;
+    public double in_m;
+    public double in_sma;
+    public double in_ecc;
+
+    public TLESemiObj(TLEObject data)
+    {
+        in_per = data.in_per;
+        in_apo = data.in_apo;
+        in_inc = data.in_inc;
+        in_raan = data.in_raan;
+        in_arg = data.in_arg;
+        in_m = data.in_m;
+        in_sma = data.in_sma;
+        in_ecc = data.in_ecc;
+    }
+};
+
+public struct ObjectState
+{
+    public double positionX;
+    public double positionY;
+    public double positionZ;
+
+    public double velocityX;
+    public double velocityY;
+    public double velocityZ;
+
+    public ObjectState(double[] data)
+    {
+        positionX = data[0];
+        positionY = data[1];
+        positionZ = data[2];
+
+        velocityX = data[3];
+        velocityY = data[4];
+        velocityZ = data[5];
+    }
+
+    public Vector3 PositionToVector3(float scale_factor)
+    {
+        return new Vector3((float)positionX / scale_factor, (float)positionY / scale_factor, (float)positionZ / scale_factor);
+    }
+};

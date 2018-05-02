@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
+using System;
 
-public class DllAdapter : MonoBehaviour {
+public class DllAdapter {
 
     [DllImport("ThesisDll", EntryPoint = "kep2car")]
     public static unsafe extern void Kep2Car(double* kep, double* car);
@@ -11,7 +12,9 @@ public class DllAdapter : MonoBehaviour {
     [DllImport("ThesisDll", EntryPoint = "prop_Keplerian_motion")]
     public static unsafe extern void PropKeplerianMotion(double* in_par, double dt, double* out_par);
 
-    //TODO Eliminare e togliere monobehav
+    public static double T = 0d;
+
+    //TODO Eliminare
     public void Start()
     {
         double[] state = new double[6] { 15d, 10d, 1234d, 156d, 172d, 18d };
@@ -26,10 +29,69 @@ public class DllAdapter : MonoBehaviour {
             }
         }
 
-        foreach(double el in out_state)
-        {
-            Debug.Log(el+" ");
-        }
     }
 
+    //From TLE Object to Cartesian coordinates position and velocity
+    public static ObjectState Kep2CarAdapter(TLEObject data)
+    {
+        double[] kep = { data.in_sma, data.in_ecc, data.in_inc * Constants.DEGREE, data.in_raan * Constants.DEGREE, data.in_m * Constants.DEGREE };
+        double[] car = new double[Constants.NDIM];
+
+        unsafe
+        {
+            fixed (double* kep_pointer = &kep[0], car_pointer = &car[0]) {
+
+                Kep2Car(kep_pointer, car_pointer);
+
+            }
+        }
+
+        ObjectState state = new ObjectState(car);
+
+        return state;
+    }
+
+    public static ObjectState KeplerianMotionAdapter(ObjectState initial_state, TLEObject obj)
+    {
+        //double T = 2 * Constants.PI * Math.Sqrt((obj.in_sma * obj.in_sma * obj.in_sma) / Constants.MU_EARTH);
+
+        double[] car_in = { initial_state.positionX, initial_state.positionY, initial_state.positionZ, initial_state.velocityX, initial_state.velocityY, initial_state.velocityZ };
+        double[] car_out = new double[Constants.NDIM];
+
+        unsafe
+        {
+            fixed (double* in_car = &car_in[0], out_car = &car_out[0])
+            {
+
+                PropKeplerianMotion(in_car, T, out_car);
+
+            }
+        }
+
+        //Debug.Log(car_out[0] + " " + car_out[1] + " " + car_out[2] + " " + car_out[3] + " " + car_out[4] + " " + car_out[5]);
+
+        return new ObjectState(car_out);
+    }
+
+    public static ObjectState KeplerianMotionAdapter(ObjectState initial_state, TLESemiObj obj)
+    {
+        //double T = 2 * Constants.PI * Math.Sqrt((obj.in_sma * obj.in_sma * obj.in_sma) / Constants.MU_EARTH);
+
+        double[] car_in = { initial_state.positionX, initial_state.positionY, initial_state.positionZ, initial_state.velocityX, initial_state.velocityY, initial_state.velocityZ };
+        double[] car_out = new double[Constants.NDIM];
+
+        unsafe
+        {
+            fixed (double* in_car = &car_in[0], out_car = &car_out[0])
+            {
+
+                PropKeplerianMotion(in_car, T, out_car);
+
+            }
+        }
+
+        //Debug.Log(car_out[0] + " " + car_out[1] + " " + car_out[2] + " " + car_out[3] + " " + car_out[4] + " " + car_out[5]);
+
+        return new ObjectState(car_out);
+    }
 }
